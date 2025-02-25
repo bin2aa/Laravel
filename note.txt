@@ -1,0 +1,23 @@
+database
+php artisan migrate:rollback  rollback migration trước khi chạy lại:
+php artisan migrate
+php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất cả các migration từ đầu:
+
+
+php artisan config:clear  xóa cache config:
+php artisan cache:clear
+
+
+
+
+Model: Định nghĩa các thuộc tính và quan hệ của bảng trong cơ sở dữ liệu.
+Migration: Định nghĩa cấu trúc bảng trong cơ sở dữ liệu.
+Controller: Xử lý logic ứng dụng và tương tác với model.
+Routes: Định nghĩa các URL và ánh xạ chúng tới các phương thức trong controller.
+Views: Hiển thị dữ liệu cho người dùng.
+
+
+Dùng css trong resources
+npm install
+npm run dev
+npm run build
