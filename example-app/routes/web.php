@@ -66,4 +66,16 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 
     //Cập nhật người dùng
     Route::put('/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
+
+    //xem thông tin người dùng
+    // Route::get('/profile', function () {
+    //     return view('profile.userDetails');
+    // })->name('profile');
+    // Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [UserController::class, 'showProfile'])->name('profile');
+        Route::put('/{id}', [UserController::class, 'updateProfile'])->name('profile.updateProfile');
+    });
+
 });

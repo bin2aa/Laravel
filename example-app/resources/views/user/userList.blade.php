@@ -96,6 +96,28 @@
         </tbody>
     </table>
 
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Thông báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Cập nhật Thành công
+            </div>
+        </div>
+    </div>
+
+
+    @if(session('success'))
+    <script>
+        var toastEl = document.getElementById('successToast');
+        var toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    </script>
+    @endif
+
     <!-- Quay lại Dashboard -->
     <a href="{{ route('dashboardssss') }}" class="btn btn-primary">Quay lại</a>
 </div>
