@@ -36,6 +36,9 @@
                     <div class="text-center">
                         <a href="{{ route('register') }}" class="text-decoration-none">Đăng ký</a>
                     </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ route('forgot-password') }}" class="text-decoration-none">Quên mật khẩu?</a>
+                    </div>
                 </form>
                 <!-- Thêm thông báo riêng cho account status has-->
                 <!-- Sau đó hiển thị thông báo first-->
@@ -57,6 +60,30 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Toast Notification bootstrap5 từ reset password -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Thông báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                Đặt lại mật khẩu thành công!
+            </div>
+        </div>
+    </div>
+
+    @if(session('status'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var toastEl = document.getElementById('successToast');
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    </script>
+    @endif
 </body>
 
 </html>

@@ -15,6 +15,8 @@ php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất 
 php artisan config:clear  xóa cache config:
 php artisan cache:clear
 
+//thêm cột mới trong bảng
+php artisan make:migration (tên cột mới) --table=tên bảng
 
 
 

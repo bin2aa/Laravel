@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 
 Route::get('/', function () {
     return view('home');
@@ -34,6 +36,19 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 
 // đăng xuất
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// quên mật khẩu
+Route::get('/forgot-password', function () {
+    return view('account.forgot-password');
+})->name('forgot-password');
+
+// Quên mật khẩu
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('forgot-password');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+// Đặt lại mật khẩu
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
 

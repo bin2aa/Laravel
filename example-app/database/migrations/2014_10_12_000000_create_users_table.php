@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
 
+            $table->rememberToken();
             //thêm first_name và last_name
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
@@ -31,9 +32,9 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    // public function down(): void  //dùng để xóa bảng
-    // {
-    //     Schema::dropIfExists('users'); // xóa bảng users
+    public function down(): void  //dùng để xóa bảng
+    {
+        Schema::dropIfExists('users'); // xóa bảng users
         
-    // }
+    }
 };
