@@ -1,4 +1,12 @@
 database
+
+php artisan make:model ... -m
+php artisan make:migration create_..._table
+
+php artsan make:seed ....
+php artsan db:seed --class=...
+php artsan db:seed
+
 php artisan migrate:rollback  rollback migration trước khi chạy lại:
 php artisan migrate
 php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất cả các migration từ đầu:

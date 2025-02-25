@@ -63,6 +63,7 @@ class UserController extends Controller
         $user = User::findOrFail($id);
         $user->first_name = $request->input('first_nameUD');
         $user->last_name = $request->input('last_nameUD');
+        $user->address = $request->input('addressUD'); 
         $user->save();
 
         return redirect()->route('users')->with('success', 'Cập nhật thông tin người dùng thành công.');

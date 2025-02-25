@@ -25,6 +25,7 @@
                 <th>ID</th>
                 <th>Tên</th>
                 <th>Email</th>
+                <th>Địa chỉ</th>
                 <th>Ngày tạo</th>
                 <th>Ngày cập nhật</th>
                 <th>Trạng thái</th>
@@ -37,6 +38,7 @@
                 <td>{{ $user->id }}</td>
                 <td>{{ $user->first_name }} {{ $user->last_name }}</td>
                 <td>{{ $user->email }}</td>
+                <td>{{ $user->address }}</td>
                 <td>{{ $user->created_at }}</td>
                 <td>{{ $user->updated_at }}</td>
                 <td>
@@ -77,6 +79,10 @@
                                         <div class="mb-3">
                                             <label for="last_name{{ $user->id }}" class="form-label">Last Name</label>
                                             <input type="text" class="form-control" id="last_name{{ $user->id }}" name="last_nameUD" value="{{ $user->last_name }}" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="address{{ $user->id }}" class="form-label">Address</label>
+                                            <input type="text" class="form-control" id="address{{ $user->id }}" name="addressUD" value="{{ $user->address }}" maxlength="200" required>
                                         </div>
                                         <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                                     </form>
