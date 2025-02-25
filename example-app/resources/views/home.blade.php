@@ -53,14 +53,23 @@
             <a href="{{ url('/send-mail') }}" class="btn btn-primary">Send Test Mail</a>
         </div>
 
-        <div class="text-center mt-4">
+        <!-- <div class="text-center mt-4">
             <a href="{{ url('/dashboard') }}" class="btn btn-primary">Dashboard</a>
+        </div> -->
+
+        <!-- Nếu đã đăng nhập thì hiển thị nút dashboard, ngược lại hiển thị nút đăng nhập -->
+        <div class="text-center mt-4">
+            @if (Auth::check())
+            <a href="{{ url('/dashboard') }}" class="btn btn-primary">Dashboard</a>
+            @else
+            <a href="{{ url('/login') }}" class="btn btn-primary">Đăng nhập</a>
+            @endif
         </div>
 
         <!-- Nút đăng nhập và đăng ký -->
-        <div class="text-center mt-4">
+        <!-- <div class="text-center mt-4">
             <a href="{{ url('/login') }}" class="btn btn-primary">Đăng nhập</a>
-        </div>
+        </div> -->
     </div>
 
 

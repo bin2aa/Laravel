@@ -17,20 +17,17 @@ Route::get('/send-mail', function () {
     return 'Email đã được Nguyễn Thanh Thịnh';
 });
 
-Route::get('/dashboard', function() {
-    return view('dashboard');
-});
 
-Route::get('/login', function() {
+Route::get('/login', function () {
     return view('account.login');
 })->name('login');
 
-Route::get('/register', function() {
+Route::get('/register', function () {
     return view('account.register');
 })->name('register');
 
 // đăng ký tài khoản 
-Route::post('/register', [RegisterController::class, 'register'])->name('register'); 
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
 
 // đăng nhập
 Route::post('/login', [LoginController::class, 'login'])->name('login');
@@ -38,5 +35,20 @@ Route::post('/login', [LoginController::class, 'login'])->name('login');
 // đăng xuất
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-// hiển thị danh sách người dùng
-Route::get('/users', [UserController::class, 'showUsers'])->name('users');
+
+
+Route::middleware(['auth', 'check.account.status'])->group(function () {
+
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboardssss');
+
+    // hiển thị danh sách người dùng
+    Route::get('/users', [UserController::class, 'showUsers'])->name('users');
+
+    // cập nhật trạng thái người dùng
+    Route::put('/users/{id}/status', [UserController::class, 'updateStatus'])->name('updateUserStatus');
+
+    //Cập nhật người dùng
+    Route::put('/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
+});

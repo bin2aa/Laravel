@@ -12,8 +12,25 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password'); // lấy thông tin từ request
 
         if (Auth::attempt($credentials)) { // kiểm tra thông tin đăng nhập
-            
-            return redirect()->intended('dashboard')->with('successLogin','Đăng nhập thành công'); // chuyển hướng đến trang dashboard
+            $user = Auth::user(); // lấy thông tin user
+            // Kiểm tra trạng thái tài khoản
+            switch ($user->status) {
+                case '0': // chờ phê duyệt (pending)
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors(['account_status0' => 'Tài khoản của bạn đang chờ phê duyệt.'])->withInput();
+                case '1': // bị từ chối (refuse)
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors(['account_status1' => 'Tài khoản của bạn đã bị từ chối.'])->withInput();
+                case '2': // bị khóa (lock)
+                    Auth::logout();
+                    return redirect()->route('login')->withErrors(['account_status2' => 'Tài khoản của bạn đã bị khóa.'])->withInput();
+                case '3': // đã duyệt ( chờ phê duyệt)
+                    // if ($user->role === 'admin') {
+                    return redirect()->intended('dashboard')->with('successLogin', 'Đăng nhập thành công'); // chuyển hướng đến trang dashboard
+                    // } else {
+                    //     return redirect()->intended('')->with('successLogin', 'Đăng nhập thành công'); 
+                    // }
+            }
         }
 
         return back()->withErrors([
