@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'AdminLTE 3', 
+    'title' => 'AdminLTE 3',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -397,6 +397,11 @@ return [
             'text' => 'Quản lý tài khoản',
             'icon' => '',
             'url' => '/users',
+        ],
+        [
+            'text' => 'Xem bài viết',
+            'icon' => '',
+            'url' => '/posts',
         ],
         [
             'text' => 'Nguyễn Thanh Thịnh',

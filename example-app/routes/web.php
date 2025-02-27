@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\PostController;
 
 Route::get('/', function () {
     return view('home');
@@ -78,4 +79,14 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
         Route::put('/{id}', [UserController::class, 'updateProfile'])->name('profile.updateProfile');
     });
 
+
+    // tạo bài viết
+    Route::prefix('posts')->group(function () {
+
+        Route::get('/', [PostController::class, 'listPost'])->name('listPosts');
+        Route::get('/create', [PostController::class, 'showCreatePostForm'])->name('posts.showCreatePostForm');
+        Route::post('/posts/create', [PostController::class, 'createPost'])->name('posts.createPost');
+        Route::get('/published', [PostController::class, 'listPublishedPosts'])->name('listPublishedPosts');
+        Route::get('/draft', [PostController::class, 'listDraftPosts'])->name('listDraftPosts');
+    });
 });

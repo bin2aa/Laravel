@@ -4,6 +4,8 @@ php artisan make:model ... -m
 php artisan make:migration create_..._table
 
 php artsan make:seed ....
+
+đẩy dữ liệu giả vào database.
 php artsan db:seed --class=...
 php artsan db:seed
 
@@ -15,9 +17,22 @@ php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất 
 php artisan config:clear  xóa cache config:
 php artisan cache:clear
 
+php artisan make:factory ...Factory --model=...
+
 //thêm cột mới trong bảng
 php artisan make:migration (tên cột mới) --table=tên bảng
 
+//symbolic link (liên kết tượng trưng) từ thư mục storage/app/public đến thư mục public/storage.
+php artisan storage:link
+
+
+//Thêm thư viện
+Quản lý hình ảnh qua thư viện spatie media
+composer require spatie/laravel-medialibrary
+
+//Cập nhật migration để thêm cột cho Media Library
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+php artisan migrate
 
 
 Model: Định nghĩa các thuộc tính và quan hệ của bảng trong cơ sở dữ liệu.

@@ -15,7 +15,7 @@ class User extends Authenticatable
 
     protected $fillable = [ // thêm dòng này để định nghĩa các trường có thể gán
         // 'name',
-       'first_name',
+        'first_name',
         'last_name',
         'email',
         'password',
@@ -30,7 +30,7 @@ class User extends Authenticatable
         // 'remember_token',
     ];
 
-   
+
     protected $casts = [ // thêm dòng này để định dạng dữ liệu
         'password' => 'hashed', // thêm dòng này để mã hóa mật khẩu
     ];
@@ -38,5 +38,10 @@ class User extends Authenticatable
     public function getNameAttribute(): string // thêm dòng này để lấy tên đầy đủ
     {
         return "{$this->first_name} {$this->last_name}";
+    }
+
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
     }
 }
