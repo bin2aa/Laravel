@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Str;
+use App\Http\Requests\PostRequest;
 
 class PostController extends Controller
 {
@@ -20,23 +21,24 @@ class PostController extends Controller
         return view('post.createPost');
     }
 
-    public function createPost(Request $request)
+    public function createPost(PostRequest $request)
     {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
-            'description' => 'required|string',
-            'content' => 'required|string',
-            'publish_date' => 'required|date',
-            'status' => 'required|integer',
-        ]);
+        // $request->validate([
+        //     'title' => 'required|string|max:255',
+        //     'slug' => 'required|string|max:255',
+        //     'description' => 'required|string',
+        //     'content' => 'required|string',
+        //     'publish_date' => 'required|date',
+        //     'status' => 'required|integer',
+        // ]);
 
         $post = Post::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'slug' => Str::slug($request->slug),
             'description' => $request->description,
-            'content' => $request->content,
+            // 'content' => $request->content,
+            'content' => strip_tags($request->content), // Loại bỏ tất cả thẻ HTML
             'publish_date' => $request->publish_date,
             'status' => $request->status,
         ]);
@@ -52,7 +54,7 @@ class PostController extends Controller
         //     $post->save();
         // }
 
-        return redirect()->route('listPosts')->with('success', 'Bài viết đã được tạo thành công.');
+        return redirect()->route('listPosts')->with('success', 'Bài viết đã được tạo thành công.')->withInput();
     }
 
     public function listPublishedPosts()

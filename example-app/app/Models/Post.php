@@ -59,10 +59,19 @@ class Post extends Model implements HasMedia
             ->withResponsiveImages();
     }
 
-    public function registerMediaCollections(): void
+    // Accessor cho thuộc tính thumbnail
+    public function getThumbnailAttribute()
     {
-        $this->addMediaCollection('thumbnails') 
-            ->useDisk('public')
-            ->singleFile(); // Chỉ cho phép upload 1 file
+        if ($this->hasMedia('thumbnails')) {
+            return $this->getFirstMediaUrl('thumbnails');
+        }
+        return null;
     }
+
+    // Accessor để lấy nội dung không có HTML
+    public function getPlainContentAttribute()
+    {
+        return strip_tags($this->content);
+    }
+    
 }

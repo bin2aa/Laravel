@@ -6,10 +6,6 @@
 <div class="container mt-5">
     <h1 class="text-center mb-4">Danh sách bài viết</h1>
 
-    <!-- hiển thị ảnh test ở public/thumbnails -->
-    <img src="{{ asset('storage/thumbnails/logon3.png') }}" alt="Thumbnail" width="100"> <br>
-    <img src="{{ asset('storage/43/logon3.png') }}" alt="Thumbnail" width="100"> <br>
-
     <!-- Nút mở modal tạo bài viết -->
     <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#createPostModal">
         Tạo bài viết
@@ -28,32 +24,33 @@
                         @csrf
                         <div class="mb-3">
                             <label for="title" class="form-label">Tiêu đề</label>
-                            <input type="text" class="form-control" id="title" name="title" required>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="slug" class="form-label">Slug</label>
-                            <input type="text" class="form-control" id="slug" name="slug" required>
+                            <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}"  required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
-                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                            <textarea class="form-control" id="description" name="description" rows="3" required>{{ old('description') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="content" class="form-label">Nội dung</label>
-                            <textarea class="form-control" id="content" name="content" rows="5" required></textarea>
+                            <textarea class="editor form-control" id="content" name="content" rows="10">{{ old('content') }}</textarea>
                         </div>
                         <div class="mb-3">
                             <label for="thumbnail" class="form-label">Thumbnail</label>
                             <input type="file" class="form-control" id="thumbnail" name="thumbnail">
                         </div>
                         <input type="hidden" id="publish_date" name="publish_date" value="{{ now()->toDateString() }}">
-                        <div class="mb-3">
+                        <!-- <div class="mb-3" hidden>
                             <label for="status" class="form-label">Trạng thái</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="0">Bản nháp</option>
-                                <option value="1">Đã xuất bản</option>
+                                <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Bản nháp</option>
+                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Đã xuất bản</option>
                             </select>
-                        </div>
+                        </div> -->
+                        <input type="hidden" id="status" name="status" value="{{ old('status', 0) }}">
                         <button type="submit" class="btn btn-primary">Lưu bài viết</button>
                     </form>
                 </div>
@@ -70,6 +67,7 @@
                 <th>Slug</th>
                 <th>Mô tả</th>
                 <th>Ngày đăng</th>
+                <th>Nội dung</th>
                 <th>Trạng thái</th>
                 <th>Thumbnail</th>
             </tr>
@@ -82,42 +80,17 @@
                 <td>{{ $post->slug }}</td>
                 <td>{{ $post->description }}</td>
                 <td>{{ $post->publish_date }}</td>
+                <td>{{ $post->plain_content }}</td>
                 <td>{{ $post->status }}</td>
 
-                <!-- <td>
-                    @if($post->thumbnail)
-                    <img src="{{ Storage::url($post->thumbnail) }}" alt="Thumbnail" width="100">
-                    @else
-                    <span>Không có ảnh</span>
-                    @endif
-                </td> -->
-
-                <!-- <td>
-                    @if($post->hasMedia('thumbnails'))
-                    <img src="{{ asset('storage/' . $post->getFirstMedia('thumbnails')->id . '/' . $post->getFirstMedia('thumbnails')->file_name) }}" alt="{{ $post->title }}" width="100">
-                    <br>
-                    <span>{{ asset('storage/' . $post->getFirstMedia('thumbnails')->id . '/' . $post->getFirstMedia('thumbnails')->file_name) }}</span>
-                    @else
-                    <span>Không có ảnh</span>
-                    @endif
-                </td> -->
-                
                 <!-- Cột hiển thị ảnh -->
                 <td>
-                    @if($post->hasMedia('thumbnails'))
-                    <img src="{{ $post->getFirstMediaUrl('thumbnails') }}" alt="{{ $post->title }}" width="100">
+                    @if($post->thumbnail)
+                    <img src="{{ $post->thumbnail }}" alt="{{ $post->title }}" width="100">
                     @else
                     <span>Không có ảnh</span>
                     @endif
                 </td>
-
-                <!-- <td>
-                    @if($post->hasMedia('thumbnails'))
-                    {{ $post->getFirstMedia('thumbnails')->file_name }}
-                    @else
-                    <span>Không có ảnh</span>
-                    @endif
-                </td> -->
             </tr>
             @endforeach
         </tbody>
@@ -147,4 +120,33 @@
     <!-- Quay lại Dashboard -->
     <a href="{{ route('dashboardssss') }}" class="btn btn-primary">Quay lại</a>
 </div>
+
+<script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // khởi tạo CKEditor trên content
+        ClassicEditor
+            .create(document.querySelector('#content'))
+            .catch(error => {
+                console.error(error);
+            });
+        // tự động chuyển tiêu đề thành slug
+        const titleInput = document.querySelector('#title');
+        const slugInput = document.querySelector('#slug');
+
+        titleInput.addEventListener('input', function() {
+            slugInput.value = convertToSlug(titleInput.value);
+        });
+
+        function convertToSlug(text) {
+            return text
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '') // loại bỏ dấu tiếng Việt
+                .replace(/[^\w ]+/g, '')
+                .replace(/ +/g, '-');
+        }
+    });
+</script>
+
 @endsection

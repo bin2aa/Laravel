@@ -30,6 +30,9 @@ php artisan storage:link
 Quản lý hình ảnh qua thư viện spatie media
 composer require spatie/laravel-medialibrary
 
+//form request
+php artisan make:request ...Request
+
 //Cập nhật migration để thêm cột cho Media Library
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
 php artisan migrate
