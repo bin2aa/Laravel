@@ -14,6 +14,7 @@ class UserController extends Controller
         // $users = User::all(); // Lấy tất cả người dùng từ cơ sở dữ liệu
         // return view('user.userList', compact('users')); // Trả về view và truyền danh sách người dùng
 
+        // 
         $user = Auth::user();
         if ($user->role !== 'admin') {
             return abort(404);
@@ -90,6 +91,14 @@ class UserController extends Controller
     {
         $userDetails = Auth::user(); // Lấy thông tin người dùng hiện tại
         return view('profile.userDetails', compact('userDetails')); // Trả về view và truyền thông tin người dùng
+    }
+
+    public function showUserPosts($id)
+    {
+        $user = User::findOrFail($id);
+        $posts = $user->posts; // Lấy tất cả bài viết của người dùng 'posts từ model User'
+
+        return view('user.userPosts', compact('user', 'posts'));
     }
 }
 

@@ -70,6 +70,14 @@
         <!-- <div class="text-center mt-4">
             <a href="{{ url('/login') }}" class="btn btn-primary">Đăng nhập</a>
         </div> -->
+
+        <!-- client -->
+
+        <div class="text-center mt-4">
+            <a href="{{ url('/client') }}" class="btn btn-primary">Client</a>
+        </div>
+        
+
     </div>
 
 

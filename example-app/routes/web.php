@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ClientController;
 
 Route::get('/', function () {
     return view('home');
@@ -55,9 +56,9 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name(
 
 Route::middleware(['auth', 'check.account.status'])->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboardssss');
+    // Route::get('/dashboard', function () {
+    //     return view('dashboard');
+    // })->name('dashboardssss');
 
     // hiển thị danh sách người dùng
     Route::get('/users', [UserController::class, 'showUsers'])->name('users');
@@ -67,6 +68,8 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 
     //Cập nhật người dùng
     Route::put('/users/{id}', [UserController::class, 'updateUser'])->name('updateUser');
+
+    Route::get('/dashboard', [PostController::class, 'listAllPosts'])->name('dashboardssss');
 
     //xem thông tin người dùng
     // Route::get('/profile', function () {
@@ -85,8 +88,37 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 
         Route::get('/', [PostController::class, 'listPost'])->name('listPosts');
         Route::get('/create', [PostController::class, 'showCreatePostForm'])->name('posts.showCreatePostForm');
-        Route::post('/posts/create', [PostController::class, 'createPost'])->name('posts.createPost');
+        Route::post('/create', [PostController::class, 'createPost'])->name('posts.createPost');
         Route::get('/published', [PostController::class, 'listPublishedPosts'])->name('listPublishedPosts');
         Route::get('/draft', [PostController::class, 'listDraftPosts'])->name('listDraftPosts');
+
+        Route::put('/{post}', [PostController::class, 'updatePost'])->name('posts.updatePost');
+        Route::delete('/{post}', [PostController::class, 'deletePost'])->name('posts.deletePost');
+        Route::patch('/approve/{post}', [PostController::class, 'approvePost'])->name('posts.approvePost');
+        Route::patch('/unapprove/{post}', [PostController::class, 'unapprovePost'])->name('posts.unapprovePost');
     });
+
+
+    // xem bài viết của người dùng
+    Route::get('/users/{id}/posts', [UserController::class, 'showUserPosts'])->name('users.posts');
+
+    // client
+});
+
+
+// Route::get('/client', function () {
+//     return view('client.index');
+// });
+// Route::get('/client', [PostController::class, 'listApprovedPosts']);
+
+Route::prefix('client')->group(function () {
+    Route::get('/', action: [PostController::class, 'index'])->name('client.index');
+    Route::post('/create', [PostController::class, 'createPostClient'])->name('client.createPostClient');
+    Route::get('/client', [PostController::class, 'index'])->name('client.index');
+    Route::get('/my-posts', [PostController::class, 'myPosts'])->name('client.myPosts');
+    Route::get('/posts/{id}', [PostController::class, 'show'])->name('client.showPosts');
+    Route::get('/posts/{post}/edit', [PostController::class, 'editClient'])->name('client.editPosts');
+    Route::put('/posts/{post}', [PostController::class, 'updateClient'])->name('client.updatePosts');
+    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('client.destroyPosts');
+    Route::delete('/my-posts/destroy-all', [PostController::class, 'destroyAll'])->name('client.destroyAllPosts');
 });

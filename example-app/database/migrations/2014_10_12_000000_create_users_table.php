@@ -20,6 +20,7 @@ return new class extends Migration
             //thêm first_name và last_name
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
+            $table->string('address')->nullable();
             
             //thêm status và role
             $table->tinyInteger('status')->default(0);

@@ -19,9 +19,9 @@ class User extends Authenticatable
         'last_name',
         'email',
         'password',
+        'address',
         'status',
         'role',
-        'address',
     ];
 
 
@@ -43,5 +43,10 @@ class User extends Authenticatable
     public function posts()
     {
         return $this->hasMany(Post::class);
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }

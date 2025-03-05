@@ -4,12 +4,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Post extends Model implements HasMedia
 {
-    use InteractsWithMedia;
+    use InteractsWithMedia, SoftDeletes, HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -29,21 +30,25 @@ class Post extends Model implements HasMedia
         return $value == self::STATUS_PUBLISHED ? 'Đã xuất bản' : 'Bản nháp';
     }
 
+    // Một bài viết thuộc về một người dùng
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    // phạm vi truy vấn để lấy ra bài viết đã xuất bản
     public function scopePublished($query)
     {
         return $query->where('status', self::STATUS_PUBLISHED);
     }
 
+    // phạm vi truy vấn để lấy ra bài viết là bản nháp
     public function scopeDraft($query)
     {
         return $query->where('status', self::STATUS_DRAFT);
     }
 
+    // Dùng để xử lý ảnh đại diện của bài viết (thumbnail)
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
@@ -73,5 +78,7 @@ class Post extends Model implements HasMedia
     {
         return strip_tags($this->content);
     }
+
+
     
 }

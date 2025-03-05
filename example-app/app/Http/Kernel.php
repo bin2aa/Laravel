@@ -69,5 +69,7 @@ class Kernel extends HttpKernel
     // Thêm middleware mới 
     protected $routeMiddleware = [
         'check.account.status' => \App\Http\Middleware\CheckAccountStatus::class,
+        'admin' => \App\Http\Middleware\CheckAdminRole::class,
     ];
+
 }

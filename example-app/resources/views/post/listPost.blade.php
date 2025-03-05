@@ -1,4 +1,5 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+@section('plugins.Datatables', true)
 
 @section('title', 'Danh sách bài viết')
 
@@ -7,9 +8,10 @@
     <h1 class="text-center mb-4">Danh sách bài viết</h1>
 
     <!-- Nút mở modal tạo bài viết -->
-    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#createPostModal">
+    <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createPostModal">
         Tạo bài viết
     </button>
+
 
     <!-- Modal tạo bài viết -->
     <div class="modal fade" id="createPostModal" tabindex="-1" aria-hidden="true">
@@ -17,7 +19,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Tạo bài viết mới</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <form action="{{ route('posts.createPost') }}" method="POST" enctype="multipart/form-data">
@@ -28,7 +32,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="slug" class="form-label">Slug</label>
-                            <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}"  required>
+                            <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}" required>
                         </div>
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
@@ -43,13 +47,6 @@
                             <input type="file" class="form-control" id="thumbnail" name="thumbnail">
                         </div>
                         <input type="hidden" id="publish_date" name="publish_date" value="{{ now()->toDateString() }}">
-                        <!-- <div class="mb-3" hidden>
-                            <label for="status" class="form-label">Trạng thái</label>
-                            <select class="form-select" id="status" name="status" required>
-                                <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>Bản nháp</option>
-                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }}>Đã xuất bản</option>
-                            </select>
-                        </div> -->
                         <input type="hidden" id="status" name="status" value="{{ old('status', 0) }}">
                         <button type="submit" class="btn btn-primary">Lưu bài viết</button>
                     </form>
@@ -58,11 +55,72 @@
         </div>
     </div>
 
+
+    <!-- Modal sửa bài viết -->
+    @foreach ($posts as $post)
+    <div class="modal fade" id="editPostModal{{ $post->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chỉnh sửa bài viết</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('posts.updatePost', $post->id) }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-3">
+                            <label for="title{{ $post->id }}" class="form-label">Tiêu đề</label>
+                            <input type="text" class="form-control" id="title{{ $post->id }}" name="title" value="{{ $post->title }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="slug{{ $post->id }}" class="form-label">Slug</label>
+                            <input type="text" class="form-control" id="slug{{ $post->id }}" name="slug" value="{{ $post->slug }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description{{ $post->id }}" class="form-label">Mô tả</label>
+                            <textarea class="form-control" id="description{{ $post->id }}" name="description" rows="3" required>{{ $post->description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content{{ $post->id }}" class="form-label">Nội dung</label>
+                            <textarea class="editor-edit form-control" id="content{{ $post->id }}" name="content" rows="10">{{ $post->content }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status{{ $post->id }}" class="form-label">Trạng thái</label>
+                            <select class="form-control" id="status{{ $post->id }}" name="status">
+                                <option value="0" {{ $post->getRawOriginal('status') == 0 ? 'selected' : '' }}>Bản nháp</option>
+                                <option value="1" {{ $post->getRawOriginal('status') == 1 ? 'selected' : '' }}>Đã xuất bản</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="thumbnail{{ $post->id }}" class="form-label">Thumbnail</label>
+                            <input type="file" class="form-control" id="thumbnail{{ $post->id }}" name="thumbnail">
+                            @if($post->thumbnail)
+                            <div class="mt-2">
+                                <img src="{{ $post->thumbnail }}" width="100" alt="Current thumbnail">
+                                <p class="small">Ảnh hiện tại</p>
+                            </div>
+                            @endif
+                        </div>
+                        <input type="hidden" name="publish_date" value="{{ $post->publish_date }}">
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endforeach
+
+
+
     <!-- Bảng danh sách bài viết -->
-    <table class="table table-bordered">
+    <table id="posts-table" class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Người đăng</th>
                 <th>Tiêu đề</th>
                 <th>Slug</th>
                 <th>Mô tả</th>
@@ -70,12 +128,14 @@
                 <th>Nội dung</th>
                 <th>Trạng thái</th>
                 <th>Thumbnail</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($posts as $post)
             <tr>
                 <td>{{ $post->id }}</td>
+                <td> {{ $post->user->name }}</td>
                 <td>{{ $post->title }}</td>
                 <td>{{ $post->slug }}</td>
                 <td>{{ $post->description }}</td>
@@ -91,6 +151,46 @@
                     <span>Không có ảnh</span>
                     @endif
                 </td>
+
+                <td>
+
+
+                    @if($post->getRawOriginal('status') == \App\Models\Post::STATUS_DRAFT)
+                    <form action="{{ route('posts.approvePost', $post->id) }}" method="POST" class="d-inline ml-1">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="fas fa-check"></i> Phê duyệt
+                        </button>
+                    </form>
+                    @else
+                    <form action="{{ route('posts.unapprovePost', $post->id) }}" method="POST" class="d-inline ml-1">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-warning btn-sm">
+                            <i class="fas fa-times"></i> Hủy duyệt
+                        </button>
+                    </form>
+                    @endif
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#editPostModal{{ $post->id }}">
+                            <i class="fas fa-edit"></i> Sửa
+                        </button>
+
+                        <form action="{{ route('posts.deletePost', $post->id) }}" method="POST" class="d-inline ml-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </form>
+                    </div>
+                </td>
+
+
+
+
             </tr>
             @endforeach
         </tbody>
@@ -101,7 +201,9 @@
         <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
                 <strong class="me-auto">Thông báo</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="toast-body">
                 Cập nhật Thành công
@@ -109,28 +211,56 @@
         </div>
     </div>
 
+
     @if(session('success'))
     <script>
-        var toastEl = document.getElementById('successToast');
-        var toast = new bootstrap.Toast(toastEl);
-        toast.show();
+        $(document).ready(function() {
+            $('#successToast').toast('show');
+        });
     </script>
     @endif
-
-    <!-- Quay lại Dashboard -->
-    <a href="{{ route('dashboardssss') }}" class="btn btn-primary">Quay lại</a>
 </div>
+@endsection
+
 
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+
+@section('js')
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // khởi tạo CKEditor trên content
+    $(document).ready(function() {
+        // Khởi tạo DataTable
+        $('#posts-table').DataTable({
+            "paging": true,
+            "lengthChange": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false,
+            "responsive": true,
+            "language": {
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Sau",
+                    "previous": "Trước"
+                },
+            }
+        });
+
+        // Khởi tạo CKEditor trên content
         ClassicEditor
             .create(document.querySelector('#content'))
             .catch(error => {
                 console.error(error);
             });
-        // tự động chuyển tiêu đề thành slug
+
+        // Khởi tạo CKEditor cho mỗi form chỉnh sửa bài viết
+        document.querySelectorAll('.editor-edit').forEach(aa => {
+            ClassicEditor
+                .create(aa)
+        });
+
+        // Tự động chuyển tiêu đề thành slug
         const titleInput = document.querySelector('#title');
         const slugInput = document.querySelector('#slug');
 
@@ -141,12 +271,10 @@
         function convertToSlug(text) {
             return text
                 .toLowerCase()
-                .normalize('NFD')
+                .normalize('NFD') // loại bỏ dấu
                 .replace(/[\u0300-\u036f]/g, '') // loại bỏ dấu tiếng Việt
-                .replace(/[^\w ]+/g, '')
-                .replace(/ +/g, '-');
+                .replace(/ +/g, '-'); // thay dấu cách bằng dấu gạch ngang
         }
     });
 </script>
-
-@endsection
+@stop

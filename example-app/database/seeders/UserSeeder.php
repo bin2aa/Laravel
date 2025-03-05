@@ -13,13 +13,18 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $user = User::create([
             'first_name' => 'Thanh',
             'last_name' => 'Thinh',
             'email' => 'asjdasdasdsd@gmail.com',
-            'password' => 'Admin123123@',
+            'password' => bcrypt('Admin123123@'), // Mã hóa mật khẩu
+            'address' => 'TP.HCM',
             'status' => '3',
             'role' => 'admin',
         ]);
+
+        // Cập nhật id của người dùng
+        $user->id = 2;
+        $user->save();
     }
 }

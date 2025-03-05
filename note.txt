@@ -1,6 +1,8 @@
 database
 
 php artisan make:model ... -m
+
+//thêm cột trong table
 php artisan make:migration create_..._table
 
 php artsan make:seed ....
@@ -12,6 +14,7 @@ php artsan db:seed
 php artisan migrate:rollback  rollback migration trước khi chạy lại:
 php artisan migrate
 php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất cả các migration từ đầu:
+
 
 
 php artisan config:clear  xóa cache config:
@@ -49,3 +52,24 @@ Dùng css trong resources
 npm install
 npm run dev
 npm run build
+
+
+quy tắc
+index để liệt kê người dùng
+store để tạo người dùng mới
+show để hiển thị một người dùng cụ thể
+update để cập nhật một người dùng cụ thể
+destroy để xóa một người dùng cụ thể
+Các route đã được đăng ký đúng cách và bạn nên có thể truy cập chúng tại http://127.0.0.1:8000/api/users.
+
+
+//eloquent ORM
+// larvel password
+// laraavel component
+
+
+
+// trình bày vấn đề
+
+//ý anh em đã note lại, anh đọc lại còn thiếu feedback gì nữa không để em sửa lại
+

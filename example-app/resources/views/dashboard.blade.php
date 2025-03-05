@@ -27,7 +27,7 @@
 </div>
 
 <p>Đây là dashboard bắt đầu với laravel Theme AdminLTE</p>
-@stop
+@endsection
 
 @section('css')
 <!-- Bootstrap CSS -->

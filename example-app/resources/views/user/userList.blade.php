@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('adminlte::page')
 
 @section('title', 'Danh sách người dùng')
 
@@ -19,7 +19,7 @@
     </form>
 
     <!-- Bảng danh sách người dùng -->
-    <table class="table table-bordered">
+    <table id='users-table' class="table table-bordered">
         <thead>
             <tr>
                 <th>ID</th>
@@ -55,8 +55,13 @@
                     </form>
                 </td>
                 <td>
+
+                    <div>
+                        <a href="{{ route('users.posts', $user->id) }}" class="btn btn-primary">Xem bài viết</a>
+                    </div>
+
                     <!-- Nút mở modal -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateUserModal{{ $user->id }}">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateUserModal{{ $user->id }}">
                         Cập nhật
                     </button>
 
@@ -66,7 +71,9 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title">Chỉnh sửa thông tin người dùng</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
                                 </div>
                                 <div class="modal-body">
                                     <form method="POST" action="{{ route('updateUser', $user->id) }}">
@@ -91,34 +98,59 @@
                         </div>
                     </div>
                 </td>
+
+
+
             </tr>
             @endforeach
         </tbody>
     </table>
 
     <!-- Toast Notification -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-container position-fixed" style="bottom: 1rem; right: 1rem;">
+        <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
             <div class="toast-header">
-                <strong class="me-auto">Thông báo</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <strong class="mr-auto">Thông báo</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="toast-body">
                 Cập nhật Thành công
             </div>
         </div>
     </div>
-
-
-    @if(session('success'))
-    <script>
-        var toastEl = document.getElementById('successToast');
-        var toast = new bootstrap.Toast(toastEl);
-        toast.show();
-    </script>
-    @endif
-
-    <!-- Quay lại Dashboard -->
-    <a href="{{ route('dashboardssss') }}" class="btn btn-primary">Quay lại</a>
 </div>
 @endsection
+
+
+
+@section('js')
+<script>
+    $(function() {
+        // Khởi tạo DataTable
+        $('#users-table').DataTable({
+            "paging": true, // Hiển thị phân trang
+            "lengthChange": true, // Hiển thị số bản ghi trên mỗi trang
+            "searching": false, // Tìm kiếm
+            "ordering": true, // Sắp xếp
+            "info": true, // Hiển thị thông tin bảng
+            "autoWidth": false, // Tự động điều chỉnh độ rộng cột
+            "responsive": true, // Tự động điều chỉnh giao diện
+            "language": {
+                "paginate": {
+                    "first": "Đầu",
+                    "last": "Cuối",
+                    "next": "Sau",
+                    "previous": "Trước"
+                }
+            }
+        });
+
+        // Hiển thị toast khi có thông báo thành công
+        if ("{{ session('success') }}" || "{{ session('successUpdateUser') }}") {
+            $('#successToast').toast('show');
+        }
+    });
+</script>
+@stop
