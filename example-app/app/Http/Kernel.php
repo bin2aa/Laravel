@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
     protected $routeMiddleware = [
         'check.account.status' => \App\Http\Middleware\CheckAccountStatus::class,
         'admin' => \App\Http\Middleware\CheckAdminRole::class,
+        'loggedin' => \App\Http\Middleware\RedirectIfIfLoggedin::class,
     ];
 
 }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use Illuminate\Support\Str;
 use App\Http\Requests\PostRequest;
+use App\Jobs\SendPostStatusEmail;
 
 class PostController extends Controller
 {
@@ -45,7 +46,7 @@ class PostController extends Controller
             'slug' => Str::slug($request->slug),
             'description' => $request->description,
             // 'content' => $request->content,
-            'content' => strip_tags($request->content), // Loại bỏ tất cả thẻ HTML
+            'content' => $request->content, // Loại bỏ tất cả thẻ HTML
             'publish_date' => $request->publish_date,
             'status' => $request->status,
         ]);
@@ -72,6 +73,7 @@ class PostController extends Controller
 
     public function listDraftPosts()
     {
+        // lấy ra tất cả bài viết chưa được duyệtf
         $posts = Post::draft()->get();
         return view('post.listPost', compact('posts'));
     }
@@ -133,8 +135,11 @@ class PostController extends Controller
             abort(403, 'Bạn không có quyền phê duyệt bài viết');
         }
 
-        $post->status = Post::STATUS_PUBLISHED;
+        $post->status = Post::STATUS_PUBLISHED; // 1
         $post->save();
+
+        // Đưa job vào queue
+        SendPostStatusEmail::dispatch($post, true);
 
         return redirect()->back()->with('success', 'Đã phê duyệt bài viết thành công');
     }
@@ -146,8 +151,11 @@ class PostController extends Controller
             abort(403, 'Bạn không có quyền hủy phê duyệt bài viết');
         }
 
-        $post->status = Post::STATUS_DRAFT;
+        $post->status = Post::STATUS_DRAFT; // 0
         $post->save();
+
+        // Đưa job vào queue
+        SendPostStatusEmail::dispatch($post, false);
 
         return redirect()->back()->with('success', 'Đã hủy phê duyệt bài viết thành công');
     }
@@ -159,7 +167,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::where('status', 1)->get(); // 1 là đã duyệt
-        return view('client.home', compact('posts'));
+        return view('client.news', compact('posts'));
     }
 
     public function createPostClient(PostRequest $request)
@@ -170,7 +178,7 @@ class PostController extends Controller
             'title' => $request->title,
             'slug' => Str::slug($request->slug),
             'description' => $request->description,
-            'content' => strip_tags($request->content), // Loại bỏ tất cả thẻ HTML
+            'content' => $request->content, // Loại bỏ tất cả thẻ HTML
             'publish_date' => $request->publish_date,
             'status' => $request->status,
         ]);
@@ -229,14 +237,15 @@ class PostController extends Controller
         return view('client.myPosts', compact('posts'));
     }
 
-    public function show($id)
+    public function show($slug, Post $post)
     {
-        $post = Post::findOrFail($id);
+        // Kiểm tra xem slug có khớp hay không
+        if ($post->slug !== $slug) {
+            return redirect()->route('client.showPosts', ['slug' => $post->slug, 'post' => $post->id]);
+        }
+
         return view('client.showPosts', compact('post'));
     }
-
-
-
 
 
     public function destroy($id)
@@ -250,5 +259,15 @@ class PostController extends Controller
     {
         Post::where('user_id', auth()->id())->delete();
         return redirect()->route('client.myPosts')->with('success', 'Tất cả bài viết đã được xóa thành công.');
+    }
+
+    public function showDetail($slug, $id)
+    {
+        $post = Post::where('id', $id)
+            ->where('slug', $slug)
+            ->where('status', Post::STATUS_PUBLISHED)
+            ->firstOrFail();
+
+        return view('client.showPosts', compact('post'));
     }
 }

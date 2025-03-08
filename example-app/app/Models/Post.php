@@ -33,7 +33,7 @@ class Post extends Model implements HasMedia
     // Một bài viết thuộc về một người dùng
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class); //hasMany ngược lại
     }
 
     // phạm vi truy vấn để lấy ra bài viết đã xuất bản
@@ -74,10 +74,10 @@ class Post extends Model implements HasMedia
     }
 
     // Accessor để lấy nội dung không có HTML
-    public function getPlainContentAttribute()
-    {
-        return strip_tags($this->content);
-    }
+    // public function getPlainContentAttribute()
+    // {
+    //     return strip_tags($this->content);
+    // }
 
 
     

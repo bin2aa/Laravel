@@ -24,7 +24,7 @@ Route::get('/send-mail', function () {
 
 Route::get('/login', function () {
     return view('account.login');
-})->name('login');
+})->middleware('loggedin')->name('login');
 
 Route::get('/register', function () {
     return view('account.register');
@@ -53,8 +53,15 @@ Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showRese
 Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 
+//xem thông tin người dùng
+Route::prefix('profile')->group(function () {
+    Route::get('/', [UserController::class, 'showProfile'])->name('profile');
+    Route::put('/{id}', [UserController::class, 'updateProfile'])->name('profile.updateProfile');
+});
 
-Route::middleware(['auth', 'check.account.status'])->group(function () {
+
+
+Route::middleware(['auth', 'check.account.status', 'admin'])->group(function () {
 
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
@@ -71,16 +78,7 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 
     Route::get('/dashboard', [PostController::class, 'listAllPosts'])->name('dashboardssss');
 
-    //xem thông tin người dùng
-    // Route::get('/profile', function () {
-    //     return view('profile.userDetails');
-    // })->name('profile');
-    // Route::get('/profile', [UserController::class, 'showProfile'])->name('profile');
 
-    Route::prefix('profile')->group(function () {
-        Route::get('/', [UserController::class, 'showProfile'])->name('profile');
-        Route::put('/{id}', [UserController::class, 'updateProfile'])->name('profile.updateProfile');
-    });
 
 
     // tạo bài viết
@@ -101,8 +99,6 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 
     // xem bài viết của người dùng
     Route::get('/users/{id}/posts', [UserController::class, 'showUserPosts'])->name('users.posts');
-
-    // client
 });
 
 
@@ -112,13 +108,19 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
 // Route::get('/client', [PostController::class, 'listApprovedPosts']);
 
 Route::prefix('client')->group(function () {
-    Route::get('/', action: [PostController::class, 'index'])->name('client.index');
-    Route::post('/create', [PostController::class, 'createPostClient'])->name('client.createPostClient');
-    Route::get('/client', [PostController::class, 'index'])->name('client.index');
-    Route::get('/my-posts', [PostController::class, 'myPosts'])->name('client.myPosts');
-    Route::get('/posts/{id}', [PostController::class, 'show'])->name('client.showPosts');
-    Route::get('/posts/{post}/edit', [PostController::class, 'editClient'])->name('client.editPosts');
-    Route::put('/posts/{post}', [PostController::class, 'updateClient'])->name('client.updatePosts');
-    Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('client.destroyPosts');
-    Route::delete('/my-posts/destroy-all', [PostController::class, 'destroyAll'])->name('client.destroyAllPosts');
+
+    //Route không cần đăng nhập
+    Route::get('/news', action: [PostController::class, 'index'])->name('client.index');
+    Route::get('/news/{slug}/{id}', [PostController::class, 'showDetail'])->name('client.post.detail');
+
+    //Route cần đăng nhập
+    Route::middleware(['auth', 'check.account.status'])->group(function () {
+        Route::post('/create', [PostController::class, 'createPostClient'])->name('client.createPostClient');
+        Route::get('/my-posts', [PostController::class, 'myPosts'])->name('client.myPosts');
+        Route::get('/posts/edit/{post}', [PostController::class, 'editClient'])->name('client.editPosts');
+        Route::get('/posts/{slug}/{post}', [PostController::class, 'show'])->name('client.showPosts');
+        Route::put('/posts/{post}', [PostController::class, 'updateClient'])->name('client.updatePosts');
+        Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('client.destroyPosts');
+        Route::delete('/my-posts/destroy-all', [PostController::class, 'destroyAll'])->name('client.destroyAllPosts');
+    });
 });

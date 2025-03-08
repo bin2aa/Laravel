@@ -14,6 +14,6 @@ class CheckAdminRole
             return $next($request);
         }
 
-        abort(403, 'Bạn không có quyền thực hiện hành động này.');
+        abort(403, 'Bạn không có quyền truy cập trang này.');
     }
 }

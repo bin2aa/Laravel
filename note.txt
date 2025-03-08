@@ -8,13 +8,18 @@ php artisan make:migration create_..._table
 php artsan make:seed ....
 
 đẩy dữ liệu giả vào database.
-php artsan db:seed --class=...
+//Chạy db specific seeder
+php artsan db:seed --class=...Seeder
+
+// chạy db seed
 php artsan db:seed
+
+php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất cả các migration từ đầu:
+php artisan migrate:fresh --seed xóa và thêm dữ liệu mẫu
+php artisan db:seed --class=...Seeder xóa và chạy các seeder cụ thể
 
 php artisan migrate:rollback  rollback migration trước khi chạy lại:
 php artisan migrate
-php artisan migrate:fresh    xóa tất cả các bảng và chạy lại tất cả các migration từ đầu:
-
 
 
 php artisan config:clear  xóa cache config:
@@ -41,6 +46,13 @@ php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServicePr
 php artisan migrate
 
 
+
+// tạo job
+php artisan queue:table  
+// fail job
+php artisan queue:failed-table  
+
+
 Model: Định nghĩa các thuộc tính và quan hệ của bảng trong cơ sở dữ liệu.
 Migration: Định nghĩa cấu trúc bảng trong cơ sở dữ liệu.
 Controller: Xử lý logic ứng dụng và tương tác với model.
@@ -60,7 +72,6 @@ store để tạo người dùng mới
 show để hiển thị một người dùng cụ thể
 update để cập nhật một người dùng cụ thể
 destroy để xóa một người dùng cụ thể
-Các route đã được đăng ký đúng cách và bạn nên có thể truy cập chúng tại http://127.0.0.1:8000/api/users.
 
 
 //eloquent ORM
@@ -73,3 +84,6 @@ Các route đã được đăng ký đúng cách và bạn nên có thể truy c
 
 //ý anh em đã note lại, anh đọc lại còn thiếu feedback gì nữa không để em sửa lại
 
+
+
+// kỹ thuật debug

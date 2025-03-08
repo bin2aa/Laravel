@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Cập nhật id của người dùng
-        $user->id = 2;
+        $user->id = 1;
         $user->save();
     }
 }

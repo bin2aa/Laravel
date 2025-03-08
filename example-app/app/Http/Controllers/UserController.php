@@ -15,12 +15,6 @@ class UserController extends Controller
         // return view('user.userList', compact('users')); // Trả về view và truyền danh sách người dùng
 
         // 
-        $user = Auth::user();
-        if ($user->role !== 'admin') {
-            return abort(404);
-        }
-
-
         $query = User::query();
 
         if ($request->has('search') && $request->has('search_type')) { // has dùng để kiểm tra xem có tồn tại giá trị trong request không
@@ -42,10 +36,6 @@ class UserController extends Controller
 
     public function updateStatus(Request $request, $id)
     {
-        $user = Auth::user();
-        if ($user->role !== 'admin') {
-            return abort(404);
-        }
 
         $user = User::findOrFail($id);
         $user->status = $request->input('statusChange');
@@ -55,11 +45,6 @@ class UserController extends Controller
 
     public function updateUser(Request $request, $id)
     {
-
-        $user = Auth::user();
-        if ($user->role !== 'admin') {
-            return abort(404);
-        }
 
         $user = User::findOrFail($id);
         $user->first_name = $request->input('first_nameUD');

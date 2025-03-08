@@ -21,12 +21,14 @@ return new class extends Migration
             $table->timestamp('publish_date');
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
     /**
      * Reverse the migrations.
      */
+
     public function down(): void
     {
         Schema::dropIfExists('posts');

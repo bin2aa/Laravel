@@ -29,19 +29,35 @@
 
         <!-- test session thông báo alert cho logout "LoginController"-->
         @if (session('successLogout'))
-        <div class="alert alert-success" role="alert">
-            <span>{{ session('successLogout') }}</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <div class="alert alert-success" role="alert">
+                <span>{{ session('successLogout') }}</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         @endif
 
         <!-- nếu đăng ký thành công -->
         @if (session('successRegister'))
-        <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
-            {{ session('successRegister') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+            <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                {{ session('successRegister') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         @endif
+
+        @if (session('successLogin'))
+            <div class="alert alert-success alert-dismissible fade show mt-4" role="alert">
+                {{ session('successLogin') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+
+        @if (session('messageLoggedin'))
+            <div class="alert alert-info">
+                {{ session('messageLoggedin') }}
+            </div>
+        @endif
+
+
 
 
     </nav>
@@ -60,9 +76,9 @@
         <!-- Nếu đã đăng nhập thì hiển thị nút dashboard, ngược lại hiển thị nút đăng nhập -->
         <div class="text-center mt-4">
             @if (Auth::check())
-            <a href="{{ url('/dashboard') }}" class="btn btn-primary">Dashboard</a>
+                <a href="{{ url('/dashboard') }}" class="btn btn-primary">Dashboard</a>
             @else
-            <a href="{{ url('/login') }}" class="btn btn-primary">Đăng nhập</a>
+                <a href="{{ url('/login') }}" class="btn btn-primary">Đăng nhập</a>
             @endif
         </div>
 
@@ -74,9 +90,10 @@
         <!-- client -->
 
         <div class="text-center mt-4">
-            <a href="{{ url('/client') }}" class="btn btn-primary">Client</a>
+            {{-- <a href="{{ url('/client/news') }}" class="btn btn-primary">Client</a> --}}
+            <a href="{{ route('client.index') }}" class="btn btn-primary">Client</a>
         </div>
-        
+
 
     </div>
 
