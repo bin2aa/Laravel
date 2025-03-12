@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -79,6 +80,9 @@ class Post extends Model implements HasMedia
     //     return strip_tags($this->content);
     // }
 
-
-    
+    // Một bài viết có nhiều bình luận
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

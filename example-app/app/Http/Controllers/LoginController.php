@@ -12,6 +12,7 @@ class LoginController extends Controller
     {
         Log::info('Login attempt', ['email' => $request->email]); // Log login attempt
         
+
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {

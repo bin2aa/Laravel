@@ -10,7 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\PostController;
-use App\Http\Controllers\ClientController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return view('home');
@@ -123,4 +123,11 @@ Route::prefix('client')->group(function () {
         Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('client.destroyPosts');
         Route::delete('/my-posts/destroy-all', [PostController::class, 'destroyAll'])->name('client.destroyAllPosts');
     });
+});
+
+
+// Route bình luận 
+Route::middleware(['auth', 'check.account.status'])->group(function () {
+    Route::post('/posts/{postId}/comment', [CommentController::class, 'store'])->name('comments.store');
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });

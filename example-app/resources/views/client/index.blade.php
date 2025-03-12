@@ -8,46 +8,54 @@
 @section('content')
     <!-- Header -->
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light bg-info shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="/">Nguyễn Thanh Thịnh</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
+                <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+                    <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
+                            <a class="nav-link" href="/">Trang chủ</a>
                         </li>
                         @auth
-                            <li class="nav-item">
+                            <li class="nav-item mx-2">
                                 <!-- Nút mở modal tạo bài viết -->
-                                <button type="button" class="btn btn-primary mb-4" data-toggle="modal"
+                                <button type="button" class="btn btn-success" data-toggle="modal"
                                     data-target="#createPostModal">
-                                    Tạo bài viết
+                                    <i class="fas fa-plus-circle me-1"></i> Tạo bài viết
                                 </button>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('client.myPosts') }}">Xem bài viết của tôi</a>
+                                <a class="nav-link" href="{{ route('client.myPosts') }}">Bài viết của tôi</a>
                             </li>
                         @endauth
                     </ul>
-                    <div class="d-flex">
+                    <div class="d-flex align-items-center">
                         @auth
-                            {{-- <span class="navbar-text me-2">Hello, {{ Auth::user()->name }}</span> --}}
-                            <span class="navbar-text me-2">
-                                <a href="{{ route('profile') }}" class="text-decoration-none">Hello,
-                                    {{ Auth::user()->name }}</a>
-                            </span>
-                            <form id="logout-form" action="{{ route('logout') }}" method="post">
-                                @csrf
-                                <button type="button" class="btn btn-outline-danger me-2"
-                                    onclick="confirmLogout()">Logout</button>
-                            </form>
+                            <div class="dropdown">
+                                <a class="btn btn-light dropdown-toggle" href="#" role="button" id="userDropdown" 
+                                   data-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" href="{{ route('profile') }}">Thông tin cá nhân</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form id="logout-form" action="{{ route('logout') }}" method="post">
+                                            @csrf
+                                            <button type="button" class="dropdown-item text-danger" onclick="confirmLogout()">
+                                                Đăng xuất
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
                         @else
-                            <a href="/login" class="btn btn-outline-primary me-2">Login</a>
-                            <a href="/register" class="btn btn-primary">Register</a>
+                            <a href="/login" class="btn btn-outline-primary me-2">Đăng nhập</a>
+                            <a href="/register" class="btn btn-primary">Đăng ký</a>
                         @endauth
                     </div>
                 </div>
@@ -59,7 +67,7 @@
     <div class="container mt-4 content">
         <div class="row">
             <!-- Main Content -->
-            <main class="col-lg-8 col-md-7">
+            <main class="col-12">
                 @yield('main-content')
             </main>
         </div>
@@ -163,6 +171,25 @@
                         .create(document.querySelector('#createPostModal #content'))
                     window.editorInitialized = true;
                 }
+
+                $('#main-content').DataTable({
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
+                    "language": {
+                        "paginate": {
+                            "first": "Đầu",
+                            "last": "Cuối",
+                            "next": "Sau",
+                            "previous": "Trước"
+                        },
+                    }
+                });
+
             });
 
 
@@ -184,7 +211,10 @@
                 document.getElementById('logout-form').submit();
             }
         }
+
+        //CKEditor
+
+
+
     </script>
-
-
 @endpush

@@ -42,11 +42,17 @@ class User extends Authenticatable
 
     public function posts()
     {
-        return $this->hasMany(Post::class); 
+        return $this->hasMany(Post::class);
     }
 
     public function hasRole($role)
     {
         return $this->role === $role;
+    }
+
+    // Một bài viết có nhiều bình luận
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

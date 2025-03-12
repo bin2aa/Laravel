@@ -53,6 +53,16 @@ php artisan queue:table
 php artisan queue:failed-table  
 
 
+//log
+Log::debug('Chi tiết debug...'); // 100
+Log::info('Thông tin...'); // 200
+Log::notice('Đáng chú ý...'); // 250
+Log::warning('Cảnh báo...'); // 300
+Log::error('Lỗi...'); // 400
+Log::critical('Nghiêm trọng...'); // 500
+Log::alert('Cảnh báo cao...'); // 550
+Log::emergency('Khẩn cấp...'); // 600
+
 Model: Định nghĩa các thuộc tính và quan hệ của bảng trong cơ sở dữ liệu.
 Migration: Định nghĩa cấu trúc bảng trong cơ sở dữ liệu.
 Controller: Xử lý logic ứng dụng và tương tác với model.
@@ -87,3 +97,8 @@ destroy để xóa một người dùng cụ thể
 
 
 // kỹ thuật debug
+
+
+//note notion
+
+//laravel enum

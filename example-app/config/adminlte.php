@@ -152,12 +152,12 @@ return [
     |
     */
 
-    'layout_topnav' => null,
+    'layout_topnav' => true,
     'layout_boxed' => null,
-    'layout_fixed_sidebar' => null,
-    'layout_fixed_navbar' => null,
+    'layout_fixed_sidebar' => true, //dùng để cố định sidebar
+    'layout_fixed_navbar' => true, // dùng để cố định navbar
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -301,10 +301,10 @@ return [
 
     'menu' => [
         // Navbar items:
-       
+
 
         // Sidebar items:
-        
+
         [
             'text' => 'Quản lý tài khoản',
             'icon' => '',

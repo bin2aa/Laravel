@@ -19,14 +19,16 @@
             @foreach($posts as $post)
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        @if($post->hasMedia('thumbnails'))
-                            <img src="{{ $post->getFirstMediaUrl('thumbnails') }}" class="card-img-top" alt="{{ $post->title }}">
+                        @if($post->thumbnail)
+                            <img src="{{ $post->thumbnail }}" class="card-img-top" alt="{{ $post->title }}">
                         @endif
                         <div class="card-body">
                             <h5 class="card-title">{{ $post->title }}</h5>
                             <p class="card-text">{{ $post->description }}</p>
                             <p class="card-text">Ngày đăng: {{ $post->publish_date }}</p>
-                            <p class="card-text">Trạng thái: {{ $post->status == 1 ? 'Đã duyệt' : 'Chưa duyệt' }}</p>
+                            <p class="card-text">Trạng thái:
+                                {{ $post->getRawOriginal('status') == 1 ? 'Đã duyệt' : 'Chưa duyệt' }}
+                            </p>
                             <div class="d-flex justify-content-between">
                                 <a href="{{ route('client.showPosts', ['slug' => $post->slug, 'post' => $post->id]) }}"
                                     class="btn btn-info btn-sm">

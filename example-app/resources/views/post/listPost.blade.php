@@ -4,13 +4,24 @@
 @section('title', 'Danh sách bài viết')
 
 @section('content')
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Danh sách bài viết</h1>
+    <div class="card">
+        <div class="card-header">
+            <h1 class="text-center mb-4">Danh sách bài viết</h1>
 
-        <!-- Nút mở modal tạo bài viết -->
-        <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createPostModal">
-            Tạo bài viết
-        </button>
+            <!-- Nút mở modal tạo bài viết -->
+            <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createPostModal">
+                Tạo bài viết
+            </button>
+
+            <div class="mb-3">
+                <button type="button" class="btn btn-outline-secondary filter-button active" data-filter="all">Tất
+                    cả</button>
+                <button type="button" class="btn btn-outline-success filter-button" data-filter="Đã xuất bản">Đã duyệt
+                    bản</button>
+                <button type="button" class="btn btn-outline-warning filter-button" data-filter="Bản nháp">Chưa duyệt</button>
+            </div>
+
+        </div>
 
 
         <!-- Modal tạo bài viết -->
@@ -58,6 +69,7 @@
                 </div>
             </div>
         </div>
+
 
 
         <!-- Modal sửa bài viết -->
@@ -125,113 +137,116 @@
         @endforeach
 
 
-
-        <!-- Bảng danh sách bài viết -->
-        <table id="posts-table" class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Người đăng</th>
-                    <th>Tiêu đề</th>
-                    <th>Slug</th>
-                    <th>Mô tả</th>
-                    <th>Ngày đăng</th>
-                    <th>Nội dung</th>
-                    <th>Trạng thái</th>
-                    <th>Thumbnail</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($posts as $post)
+        <div class="card-body">
+            <!-- Bảng danh sách bài viết -->
+            <table id="posts-table" class="table table-bordered table-striped">
+                <thead>
                     <tr>
-                        <td>{{ $post->id }}</td>
-                        <td> {{ $post->user->name }}</td>
-                        <td>{{ $post->title }}</td>
-                        <td>{{ $post->slug }}</td>
-                        <td>{{ $post->description }}</td>
-                        <td>{{ $post->publish_date }}</td>
-                        <td>{{ $post->plain_content }}</td>
-                        <td>{{ $post->status }}</td>
-
-                        <!-- Cột hiển thị ảnh -->
-                        <td>
-                            @if($post->thumbnail)
-                                <img src="{{ $post->thumbnail }}" alt="{{ $post->title }}" width="100">
-                            @else
-                                <span>Không có ảnh</span>
-                            @endif
-                        </td>
-
-                        <td>
-
-
-                            @if($post->getRawOriginal('status') == 0)
-                                <form action="{{ route('posts.approvePost', $post->id) }}" method="POST" class="d-inline ml-1">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        <i class="fas fa-check"></i> Phê duyệt
-                                    </button>
-                                </form>
-                            @else
-                                <form action="{{ route('posts.unapprovePost', $post->id) }}" method="POST" class="d-inline ml-1">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button type="submit" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-times"></i> Hủy duyệt
-                                    </button>
-                                </form>
-                            @endif
-
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
-                                    data-target="#editPostModal{{ $post->id }}">
-                                    <i class="fas fa-edit"></i> Sửa
-                                </button>
-
-                                <form action="{{ route('posts.deletePost', $post->id) }}" method="POST" class="d-inline ml-1">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm"
-                                        onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-
-
-
-
+                        <th>ID</th>
+                        <th>Người đăng</th>
+                        <th>Tiêu đề</th>
+                        <th>Slug</th>
+                        <th>Mô tả</th>
+                        <th>Ngày đăng</th>
+                        <th>Nội dung</th>
+                        <th>Trạng thái</th>
+                        <th>Thumbnail</th>
+                        <th>Thao tác</th>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach ($posts as $post)
+                        <tr>
+                            <td>{{ $post->id }}</td>
+                            <td> {{ $post->user->name }}</td>
+                            <td>{{ $post->title }}</td>
+                            <td>{{ $post->slug }}</td>
+                            <td>{{ $post->description }}</td>
+                            <td>{{ $post->publish_date }}</td>
+                            <td>{{ $post->content }}</td>
+                            <td>{{ $post->status }}</td>
 
-        <!-- Toast Notification -->
-        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-            <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="toast-header">
-                    <strong class="me-auto">Thông báo</strong>
-                    <button type="button" class="close" data-dismiss="toast" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="toast-body">
-                    Cập nhật Thành công
+                            <!-- Cột hiển thị ảnh -->
+                            <td>
+                                @if($post->thumbnail)
+                                    <img src="{{ $post->thumbnail }}" alt="{{ $post->title }}" width="100">
+                                @else
+                                    <span>Không có ảnh</span>
+                                @endif
+                            </td>
+
+                            <td>
+
+
+                                @if($post->getRawOriginal('status') == 0)
+                                    <form action="{{ route('posts.approvePost', $post->id) }}" method="POST" class="d-inline ml-1">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i> Phê duyệt
+                                        </button>
+                                    </form>
+                                @else
+                                    <form action="{{ route('posts.unapprovePost', $post->id) }}" method="POST"
+                                        class="d-inline ml-1">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="btn btn-warning btn-sm">
+                                            <i class="fas fa-times"></i> Hủy duyệt
+                                        </button>
+                                    </form>
+                                @endif
+
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                                        data-target="#editPostModal{{ $post->id }}">
+                                        <i class="fas fa-edit"></i> Sửa
+                                    </button>
+
+                                    <form action="{{ route('posts.deletePost', $post->id) }}" method="POST"
+                                        class="d-inline ml-1">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Bạn có chắc chắn muốn xóa bài viết này?')">
+                                            <i class="fas fa-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+
+
+
+
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+
+            <!-- Toast Notification -->
+            <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                <div id="successToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Thông báo</strong>
+                        <button type="button" class="close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="toast-body">
+                        Cập nhật Thành công
+                    </div>
                 </div>
             </div>
+
+
+            @if(session('success'))
+                <script>
+                    $(document).ready(function () {
+                        $('#successToast').toast('show');
+                    });
+                </script>
+            @endif
         </div>
-
-
-        @if(session('success'))
-            <script>
-                $(document).ready(function () {
-                    $('#successToast').toast('show');
-                });
-            </script>
-        @endif
     </div>
 @endsection
 
@@ -242,7 +257,7 @@
 <script>
     $(document).ready(function () {
         // Khởi tạo DataTable
-        $('#posts-table').DataTable({
+        var table = $('#posts-table').DataTable({
             "paging": true,
             "lengthChange": true,
             "searching": true,
@@ -250,6 +265,8 @@
             "info": true,
             "autoWidth": false,
             "responsive": true,
+            // "pageLength": 2,  // Thiết lập số dòng mỗi trang
+            // "lengthMenu": [2, 5, 10, 25, 50],  // Tùy chọn số dòng cho người dùng
             "language": {
                 "paginate": {
                     "first": "Đầu",
@@ -257,6 +274,25 @@
                     "next": "Sau",
                     "previous": "Trước"
                 },
+            }
+        });
+
+        // XỬ LÝ BỘ LỌC TRẠNG THÁI
+        $('.filter-button').on('click', function() {
+            // Xóa class active khỏi tất cả các nút
+            $('.filter-button').removeClass('active');
+            
+            // Thêm class active vào nút được click
+            $(this).addClass('active');
+            
+            // Lấy giá trị filter
+            var filterValue = $(this).data('filter');
+            
+            // Áp dụng filter
+            if (filterValue === 'all') {
+                table.column(7).search('').draw(); // Xóa bộ lọc, hiển thị tất cả
+            } else {
+                table.column(7).search(filterValue).draw(); // Lọc theo cột trạng thái (cột 7)
             }
         });
 

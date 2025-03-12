@@ -166,7 +166,9 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::where('status', 1)->get(); // 1 là đã duyệt
+        $posts = Post::where('status', 1)
+            ->orderBy('publish_date', 'desc') // Sắp xếp theo publish_date giảm dần
+            ->paginate(6); // 1 là đã duyệt
         return view('client.news', compact('posts'));
     }
 
@@ -237,6 +239,7 @@ class PostController extends Controller
         return view('client.myPosts', compact('posts'));
     }
 
+    // Hiển thị chi tiết bài viết dùng binding model
     public function show($slug, Post $post)
     {
         // Kiểm tra xem slug có khớp hay không
@@ -244,7 +247,9 @@ class PostController extends Controller
             return redirect()->route('client.showPosts', ['slug' => $post->slug, 'post' => $post->id]);
         }
 
-        return view('client.showPosts', compact('post'));
+        $comments = $post->comments()->with('user')->latest()->get();
+
+        return view('client.showPosts', compact('post', 'comments'));
     }
 
 
@@ -261,6 +266,7 @@ class PostController extends Controller
         return redirect()->route('client.myPosts')->with('success', 'Tất cả bài viết đã được xóa thành công.');
     }
 
+    // Hiển thị chi tiết bài viết nhưng không dùng binding model
     public function showDetail($slug, $id)
     {
         $post = Post::where('id', $id)
@@ -268,6 +274,8 @@ class PostController extends Controller
             ->where('status', Post::STATUS_PUBLISHED)
             ->firstOrFail();
 
-        return view('client.showPosts', compact('post'));
+        $comments = $post->comments()->with('user')->latest()->get();
+
+        return view('client.showPosts', compact('post', 'comments'));
     }
 }
