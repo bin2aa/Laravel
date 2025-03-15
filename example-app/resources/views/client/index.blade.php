@@ -36,13 +36,15 @@
                     <div class="d-flex align-items-center">
                         @auth
                             <div class="dropdown">
-                                <a class="btn btn-light dropdown-toggle" href="#" role="button" id="userDropdown" 
-                                   data-toggle="dropdown" aria-expanded="false">
+                                <a class="btn btn-light dropdown-toggle" href="#" role="button" id="userDropdown"
+                                    data-toggle="dropdown" aria-expanded="false">
                                     <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                     <li><a class="dropdown-item" href="{{ route('profile') }}">Thông tin cá nhân</a></li>
-                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
                                     <li>
                                         <form id="logout-form" action="{{ route('logout') }}" method="post">
                                             @csrf
@@ -93,25 +95,40 @@
                             <input type="text" class="form-control" id="title" name="title" value="{{ old('title') }}"
                                 required>
                         </div>
+
                         <div class="mb-3">
                             <label for="slug" class="form-label">Slug</label>
                             <input type="text" class="form-control" id="slug" name="slug" value="{{ old('slug') }}"
                                 required>
                         </div>
+
                         <div class="mb-3">
                             <label for="description" class="form-label">Mô tả</label>
                             <textarea class="form-control" id="description" name="description" rows="3"
                                 required>{{ old('description') }}</textarea>
                         </div>
+
                         <div class="mb-3">
                             <label for="content" class="form-label">Nội dung</label>
                             <textarea class="editor form-control" id="content" name="content"
                                 rows="10">{{ old('content') }}</textarea>
                         </div>
+
+                        <div class="mb-3">
+                            <label for="categories" class="form-label">Danh mục</label>
+                            <select class="form-control" id="categories" name="categories[]" multiple>
+                                @foreach ($categories ?? [] as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                            <small class="form-text text-muted">Giữ Ctrl để chọn nhiều danh mục</small>
+                        </div>
+
                         <div class="mb-3">
                             <label for="thumbnail" class="form-label">Thumbnail</label>
                             <input type="file" class="form-control" id="thumbnail" name="thumbnail">
                         </div>
+                        
                         <input type="hidden" id="publish_date" name="publish_date" value="{{ now()->toDateString() }}">
                         <input type="hidden" id="status" name="status" value="{{ old('status', 0) }}">
                         <button type="submit" class="btn btn-primary">Lưu bài viết</button>

@@ -9,16 +9,23 @@
             <h1 class="text-center mb-4">Danh sách bài viết</h1>
 
             <!-- Nút mở modal tạo bài viết -->
-            <button type="button" class="btn btn-primary mb-4" data-toggle="modal" data-target="#createPostModal">
-                Tạo bài viết
-            </button>
+            <div class="d-flex mb-4">
+                <button type="button" class="btn btn-primary mr-2" data-toggle="modal" data-target="#createPostModal">
+                    Tạo bài viết
+                </button>
+
+                <a href="{{ route('posts.trash') }}" class="btn btn-secondary">
+                    <i class="fas fa-trash"></i> Thùng rác
+                </a>
+            </div>
 
             <div class="mb-3">
                 <button type="button" class="btn btn-outline-secondary filter-button active" data-filter="all">Tất
                     cả</button>
                 <button type="button" class="btn btn-outline-success filter-button" data-filter="Đã xuất bản">Đã duyệt
                     bản</button>
-                <button type="button" class="btn btn-outline-warning filter-button" data-filter="Bản nháp">Chưa duyệt</button>
+                <button type="button" class="btn btn-outline-warning filter-button" data-filter="Bản nháp">Chưa
+                    duyệt</button>
             </div>
 
         </div>
@@ -57,6 +64,17 @@
                                 <textarea class="editor form-control" id="content" name="content"
                                     rows="10">{{ old('content') }}</textarea>
                             </div>
+
+                            <div class="mb-3">
+                                <label for="categories" class="form-label">Danh mục</label>
+                                <select class="form-control" id="categories" name="categories[]" multiple size="4">
+                                    @foreach ($categories ?? [] as $category)
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">Giữ Ctrl để chọn nhiều danh mục</small>
+                            </div>
+
                             <div class="mb-3">
                                 <label for="thumbnail" class="form-label">Thumbnail</label>
                                 <input type="file" class="form-control" id="thumbnail" name="thumbnail">
@@ -108,6 +126,20 @@
                                     <textarea class="editor-edit form-control" id="content{{ $post->id }}" name="content"
                                         rows="10">{{ $post->content }}</textarea>
                                 </div>
+
+                                <div class="mb-3">
+                                    <label for="categories{{ $post->id }}" class="form-label">Danh mục</label>
+                                    <select class="form-control" id="categories{{ $post->id }}" name="categories[]" multiple
+                                        size="4">
+                                        @foreach ($categories ?? [] as $category)
+                                            <option value="{{ $category->id }}" {{ $post->categories->contains('id', $category->id) ? 'selected' : '' }}>
+                                                {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <small class="form-text text-muted">Giữ Ctrl để chọn nhiều danh mục</small>
+                                </div>
+
                                 <div class="mb-3">
                                     <label for="status{{ $post->id }}" class="form-label">Trạng thái</label>
                                     <select class="form-control" id="status{{ $post->id }}" name="status">
@@ -151,6 +183,7 @@
                         <th>Nội dung</th>
                         <th>Trạng thái</th>
                         <th>Thumbnail</th>
+                        <th>Danh mục</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -173,6 +206,12 @@
                                 @else
                                     <span>Không có ảnh</span>
                                 @endif
+                            </td>
+
+                            <td>
+                                @foreach ($post->categories as $category)
+                                    <span class="badge badge-info">{{ $category->name }}</span>
+                                @endforeach
                             </td>
 
                             <td>
@@ -278,16 +317,16 @@
         });
 
         // XỬ LÝ BỘ LỌC TRẠNG THÁI
-        $('.filter-button').on('click', function() {
+        $('.filter-button').on('click', function () {
             // Xóa class active khỏi tất cả các nút
             $('.filter-button').removeClass('active');
-            
+
             // Thêm class active vào nút được click
             $(this).addClass('active');
-            
+
             // Lấy giá trị filter
             var filterValue = $(this).data('filter');
-            
+
             // Áp dụng filter
             if (filterValue === 'all') {
                 table.column(7).search('').draw(); // Xóa bộ lọc, hiển thị tất cả

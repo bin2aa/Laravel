@@ -85,4 +85,12 @@ class Post extends Model implements HasMedia
     {
         return $this->hasMany(Comment::class);
     }
+
+    // mối quan hệ n-n giữa bài viết và danh mục
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class);
+    }
+
+    
 }

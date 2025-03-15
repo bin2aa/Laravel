@@ -11,6 +11,8 @@ use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\DeletePostController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     return view('home');
@@ -94,6 +96,12 @@ Route::middleware(['auth', 'check.account.status', 'admin'])->group(function () 
         Route::delete('/{post}', [PostController::class, 'deletePost'])->name('posts.deletePost');
         Route::patch('/approve/{post}', [PostController::class, 'approvePost'])->name('posts.approvePost');
         Route::patch('/unapprove/{post}', [PostController::class, 'unapprovePost'])->name('posts.unapprovePost');
+
+
+        // xóa bài viết vĩnh viễn hoặc khôi phục bài viết đã xóa 
+        Route::get('/trash', [DeletePostController::class, 'index'])->name('posts.trash');
+        Route::patch('/{id}/restore', [DeletePostController::class, 'restore'])->name('posts.restore');
+        Route::delete('/{id}/force-delete', [DeletePostController::class, 'forceDelete'])->name('posts.force-delete');
     });
 
 
@@ -112,8 +120,9 @@ Route::prefix('client')->group(function () {
     //Route không cần đăng nhập
     Route::get('/news', action: [PostController::class, 'index'])->name('client.index');
     Route::get('/news/{slug}/{id}', [PostController::class, 'showDetail'])->name('client.post.detail');
+    // Route::get('/search', [PostController::class, 'search'])->name('client.search');
 
-    //Route cần đăng nhập
+    //Route cần đăng nhập 
     Route::middleware(['auth', 'check.account.status'])->group(function () {
         Route::post('/create', [PostController::class, 'createPostClient'])->name('client.createPostClient');
         Route::get('/my-posts', [PostController::class, 'myPosts'])->name('client.myPosts');
@@ -131,3 +140,17 @@ Route::middleware(['auth', 'check.account.status'])->group(function () {
     Route::post('/posts/{postId}/comment', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 });
+
+
+
+Route::middleware(['auth', 'check.account.status', 'admin'])->group(function () {
+    Route::resource('categories', CategoryController::class);
+    Route::delete('categories/{category}/posts/{post}', [CategoryController::class, 'removePost'])->name('categories.removePost');
+    // Route::post('categories/add-post', [CategoryController::class, 'addPostToCategory'])->name('categories.addPost');
+});
+
+Route::post('categories/{category}/posts', [CategoryController::class, 'addPost'])->name('categories.addPost');
+
+// Client routes for categories
+// Route::get('/category/{slug}', [CategoryController::class, 'postsByCategory'])->name('client.category');
+// Route::get('/api/categories', [CategoryController::class, 'getCategories'])->name('api.categories');

@@ -316,6 +316,11 @@ return [
             'url' => '/posts',
         ],
         [
+            'text' => 'Quản lý danh mục',
+            // 'icon' => 'fas fa-tags',
+            'url' => '/categories',
+        ],
+        [
             'text' => 'Nguyễn Thanh Thịnh',
             'icon' => '',
             'url' => '/',

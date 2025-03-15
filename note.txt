@@ -51,17 +51,16 @@ php artisan migrate
 php artisan queue:table  
 // fail job
 php artisan queue:failed-table  
+//
+php artisan queue:work
 
 
-//log
-Log::debug('Chi tiết debug...'); // 100
-Log::info('Thông tin...'); // 200
-Log::notice('Đáng chú ý...'); // 250
-Log::warning('Cảnh báo...'); // 300
-Log::error('Lỗi...'); // 400
-Log::critical('Nghiêm trọng...'); // 500
-Log::alert('Cảnh báo cao...'); // 550
-Log::emergency('Khẩn cấp...'); // 600
+// Dùng livewire
+composer require livewire/livewire
+
+// Tạo ra CLASS: app/Livewire//SearchPosts.php
+//	  VIEW:  C:\internPHP\Laravel\example-app\resources\views/livewire/search-posts.blade.php
+php artisan make:livewire SearchPosts
 
 Model: Định nghĩa các thuộc tính và quan hệ của bảng trong cơ sở dữ liệu.
 Migration: Định nghĩa cấu trúc bảng trong cơ sở dữ liệu.
@@ -98,7 +97,7 @@ destroy để xóa một người dùng cụ thể
 
 // kỹ thuật debug
 
+// belongsTo là quan hệ n-1, hasMany là quan hệ 1-n, hasOne là quan hệ 1-1, belongsToMany là quan hệ n-n
 
-//note notion
 
-//laravel enum
+//xác nhận email đổi mật khẩu

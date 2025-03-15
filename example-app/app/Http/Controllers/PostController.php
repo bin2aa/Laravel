@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Models\Category;
 use Illuminate\Support\Str;
 use App\Http\Requests\PostRequest;
 use App\Jobs\SendPostStatusEmail;
@@ -11,21 +12,30 @@ use App\Jobs\SendPostStatusEmail;
 class PostController extends Controller
 {
 
+    // public function listPost()
+    // {
+    //     $posts = Post::all();
+    //     // $posts = Post::where('user_id', auth()->id())->get(); // Lấy ra tất cả bài viết của user đang đăng nhập
+    //     return view('post.listPost', compact('posts'));
+    // }
+
     public function listPost()
     {
-        $posts = Post::all();
-        // $posts = Post::where('user_id', auth()->id())->get(); // Lấy ra tất cả bài viết của user đang đăng nhập
-        return view('post.listPost', compact('posts'));
+        $posts = Post::with('categories')->get();
+        $categories = Category::all();
+        return view('post.listPost', compact('posts', 'categories'));
     }
 
     public function listAllPosts()
     {
-        $posts = Post::with('user')->get();
-        return view('dashboard', compact('posts'));
+        // $posts = Post::with('user')->get();
+        return view('dashboard');
     }
+
 
     public function showCreatePostForm()
     {
+        $categories = Category::all(); // Lấy ra tất cả danh mục
         return view('post.createPost');
     }
 
@@ -55,12 +65,9 @@ class PostController extends Controller
             $post->addMedia($request->file('thumbnail'))->toMediaCollection('thumbnails');
         }
 
-
-        // if ($request->hasFile('thumbnail')) {
-        //     $path = $request->file('thumbnail')->store('public/thumbnails');
-        //     $post->thumbnail = $path;
-        //     $post->save();
-        // }
+        if ($request->has('categories')) {
+            $post->categories()->attach($request->categories);
+        }
 
         return redirect()->route('listPosts')->with('success', 'Bài viết đã được tạo thành công.')->withInput();
     }
@@ -99,6 +106,12 @@ class PostController extends Controller
             $post->addMedia($request->file('thumbnail'))->toMediaCollection('thumbnails');
         }
 
+        if ($request->has('categories')) {
+            $post->categories()->sync($request->categories);
+        } else {
+            $post->categories()->detach();
+        }
+
         return redirect()->route('listPosts')->with('success', 'Bài viết đã được cập nhật thành công');
     }
 
@@ -109,8 +122,10 @@ class PostController extends Controller
         if (auth()->user()->role !== 'admin') {
             abort(403, 'Bạn không có quyền chỉnh sửa bài viết này');
         }
+        $categories = Category::all(); // Lấy tất cả danh mục
+        $postCategories = $post->categories->pluck('id')->toArray(); // Lấy ID các danh mục của bài viết
 
-        return view('post.editPost', compact('post'));
+        return view('post.editPost', compact('post', 'categories', 'postCategories'));
     }
 
     public function deletePost(Post $post)
@@ -164,12 +179,52 @@ class PostController extends Controller
     // ---------------- Client ----------------
 
 
-    public function index()
+    // public function index()
+    // {
+    //     $posts = Post::where('status', 1)
+    //         ->orderBy('publish_date', 'desc') // Sắp xếp theo publish_date giảm dần
+    //         ->paginate(6); // 1 là đã duyệt
+    //     return view('client.news', compact('posts'));
+    // }
+
+
+    public function index(Request $request)
     {
-        $posts = Post::where('status', 1)
-            ->orderBy('publish_date', 'desc') // Sắp xếp theo publish_date giảm dần
-            ->paginate(6); // 1 là đã duyệt
-        return view('client.news', compact('posts'));
+        // Lấy từ khóa tìm kiếm
+        $search = $request->input('search');
+
+        // Lấy id danh mục từ URL
+        $categoryId = $request->input('category');
+
+        // truy vấn bài viết
+        $postsQuery = Post::where('status', Post::STATUS_PUBLISHED);
+
+        // Thêm điều kiện tìm kiếm nếu có
+        if ($search) {
+            $postsQuery->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+            });
+        }
+
+        // Lọc theo danh mục nếu có
+        if ($categoryId) {
+            $postsQuery->whereHas('categories', function ($q) use ($categoryId) {
+                $q->where('categories.id', $categoryId);
+            });
+        }
+
+        // Lấy danh sách bài viết đã lọc và phân trang
+        $posts = $postsQuery->orderBy('publish_date', 'desc')
+            ->paginate(6);
+
+        // Lấy danh sách danh mục kèm số lượng bài viết đã xuất bản
+        $categories = Category::withCount(['posts' => function ($query) {
+            $query->where('posts.status', Post::STATUS_PUBLISHED);
+        }])->get();
+
+        return view('client.news', compact('posts', 'categories', 'search'));
     }
 
     public function createPostClient(PostRequest $request)
@@ -200,8 +255,13 @@ class PostController extends Controller
         if ($post->user_id !== auth()->id()) {
             abort(404);
         }
+        // Lấy tất cả danh mục
+        $categories = Category::all();
 
-        return view('client.editPosts', compact('post'));
+        // Lấy ID các danh mục của bài viết
+        $postCategories = $post->categories->pluck('id')->toArray();
+
+        return view('client.editPosts', compact('post', 'categories', 'postCategories'));
     }
 
     public function updateClient(PostRequest $request, Post $post)
@@ -225,6 +285,12 @@ class PostController extends Controller
             // Xóa ảnh cũ trước khi thêm ảnh mới
             $post->clearMediaCollection('thumbnails');
             $post->addMedia($request->file('thumbnail'))->toMediaCollection('thumbnails');
+        }
+
+        if ($request->has('categories')) {
+            $post->categories()->sync($request->categories);
+        } else {
+            $post->categories()->detach();
         }
 
         return redirect()->route('client.myPosts')->with('success', 'Bài viết đã được cập nhật thành công.');
